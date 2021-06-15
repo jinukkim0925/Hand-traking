@@ -41,6 +41,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class video2 extends JPanel {
 	public JPanel jp, ap;
 	public static String str = "손 찾는중...", str2 = "";
 	public int boxPoint[] = { 50, 650, 50, 400 };
-	public int centerboxPoint[] = { 300, 450, 200, 300 };
+	public static int centerboxPoint[] = { 250,450, 150, 300 };
 	private static int count = 0, mode = 0;
 
 // mode =0 -> 마우스, 1 -> 게임
@@ -84,7 +85,7 @@ public class video2 extends JPanel {
 	}
 
 	public void setframe(final VideoCapture webcam) {
-		frame.setSize(1250, 650);
+		frame.setSize(1200, 650);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().add(lab, BorderLayout.CENTER);
@@ -98,7 +99,6 @@ public class video2 extends JPanel {
 			}
 		});
 //		add(jp = new JPanel());
-//		
 //		jp.setBackground(Color.black);
 		frame.add(jp = new JPanel(new GridLayout(0, 1, 30, 30)), BorderLayout.EAST);
 		jp.setPreferredSize(new Dimension(200, 300));
@@ -159,7 +159,6 @@ public class video2 extends JPanel {
 		double length2 = Math.sqrt((v2.x * v2.x) + (v2.y * v2.y));
 		double angle = Math.acos(dotproduct / (length1 * length2));
 		angolo = angle * 180 / Math.PI;
-
 		return angolo;
 	}
 
@@ -461,22 +460,6 @@ public class video2 extends JPanel {
 				new Scalar(255, 0, 0), 2);
 		Core.line(immagine, new Point(boxPoint[1], boxPoint[2]), new Point(boxPoint[1], boxPoint[3]),
 				new Scalar(255, 0, 0), 2);
-		// 임시
-//		Core.line(immagine, new Point(boxPoint[0], (boxPoint[2]+boxPoint[3])/2), new Point(boxPoint[1], (boxPoint[2]+boxPoint[3])/2),
-//				new Scalar(255, 255, 0), 2);
-//		Core.line(immagine, new Point((boxPoint[0]+boxPoint[1])/2, boxPoint[2]), new Point((boxPoint[0]+boxPoint[1])/2, boxPoint[3]),
-//				new Scalar(255, 255, 0), 2);
-//		
-//		
-//		Core.line(immagine, new Point(centerboxPoint[0], centerboxPoint[2]), new Point(centerboxPoint[1], centerboxPoint[2]),
-//				new Scalar(255, 0, 0), 2);
-//		Core.line(immagine, new Point(centerboxPoint[0], centerboxPoint[3]), new Point(centerboxPoint[1], centerboxPoint[3]),
-//				new Scalar(255, 0, 0), 2);
-//		Core.line(immagine, new Point(centerboxPoint[0], centerboxPoint[2]), new Point(centerboxPoint[0], centerboxPoint[3]),
-//				new Scalar(255, 0, 0), 2);
-//		Core.line(immagine, new Point(centerboxPoint[1], centerboxPoint[2]), new Point(centerboxPoint[1], centerboxPoint[3]),
-//				new Scalar(255, 0, 0), 2);
-
 	}
 
 	public Point centropalmo(Mat immagine, List<Point> difetti) {
@@ -532,7 +515,7 @@ public class video2 extends JPanel {
 			jl.setText(str);
 			revalidate();
 			repaint();
-			System.err.println("aaa");
+//			System.err.println("aaa");
 		} else {
 			hand = true;
 			int cnt = 0;
@@ -556,19 +539,22 @@ public class video2 extends JPanel {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			
-			for (int i = 0; i < dita.size(); i++) {
-				Core.line(immagine, center, dita.get(i), new Scalar(0, 255, 255), 4);
-				Core.circle(immagine, dita.get(i), 3, new Scalar(255, 0, 255), 3);
-				// sub
+			try {
+				for (int i = 0; i < dita.size(); i++) {
+					Core.line(immagine, center, dita.get(i), new Scalar(0, 255, 255), 4);
+					Core.circle(immagine, dita.get(i), 3, new Scalar(255, 0, 255), 3);
+					// sub
 
-				if (subpoint.get(i).x > minX && subpoint.get(i).x < maxX && subpoint.get(i).y > minY
-						&& subpoint.get(i).y < maxY) {
-					cnt++;
-					Core.line(immagine, dita.get(i), subpoint.get(i), new Scalar(0, 255, 255), 4);
-					Core.circle(immagine, subpoint.get(i), 3, new Scalar(255, 0, 255), 3);
+					if (subpoint.get(i).x > minX && subpoint.get(i).x < maxX && subpoint.get(i).y > minY
+							&& subpoint.get(i).y < maxY) {
+						cnt++;
+						Core.line(immagine, dita.get(i), subpoint.get(i), new Scalar(0, 255, 255), 4);
+						Core.circle(immagine, subpoint.get(i), 3, new Scalar(255, 0, 255), 3);
+					}
+
 				}
-
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
 			if (cnt >= 4) {
 				str = "손 핌";
@@ -579,7 +565,7 @@ public class video2 extends JPanel {
 			jl.setText(str);
 			revalidate();
 			repaint();
-			System.out.println(cnt);
+//			System.out.println(cnt);
 		}
 
 		Core.circle(immagine, center, 3, new Scalar(0, 0, 255), 3);
@@ -605,41 +591,36 @@ public class video2 extends JPanel {
 		return media;
 	}
 
-	public void connectSnake(Point center) throws InterruptedException {
+	public void connect(Point center) throws InterruptedException {
 		try {
 			Robot r = new Robot();
 //			r.mouseMove((int)center.x, (int)center.y);
 			if (mode == 0) {// 마우스
 				r.mouseMove(1800 - (int) (center.x * 3 - 300), (int) center.y * 4 - 600);
-				if (mm == 1 && gg > 2) {
+				
+				if (str.equals("손 접음")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 					r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+				}else if (str.equals("손 핌")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 				}
 			} else {// 게임
-				if (handx - boxPoint[2] > (int) center.x) {
+				
+				if (center.x > boxPoint[0] && center.x < centerboxPoint[0]) {
 					r.keyPress(39);
 					r.keyRelease(39);
-					handx = (int) center.x;
-					handy = (int) center.y;
 				}
-				if (handx + boxPoint[2] < (int) center.x) {
+				if (center.x < boxPoint[1] && center.x > centerboxPoint[1]) {
 					r.keyPress(37);
 					r.keyRelease(37);
-					handx = (int) center.x;
-					handy = (int) center.y;
 				}
-				if (handy - 20 > (int) center.y) {
+				if (center.y > boxPoint[2] && center.y < centerboxPoint[2]) {
 					r.keyPress(38);
 					r.keyRelease(38);
-					handx = (int) center.x;
-					handy = (int) center.y;
 				}
-				if (handy + 20 < (int) center.y) {
+				if (center.y < boxPoint[3] && center.y > centerboxPoint[3]) {
 					r.keyPress(40);
 					r.keyRelease(40);
-					handx = (int) center.x;
-					handy = (int) center.y;
 				}
 			}
 
@@ -664,12 +645,23 @@ public class video2 extends JPanel {
 					mm = 1;
 
 				}
-				if (mm != mm2) {
-					time = 0;
-					gg++;
+				
+				if (model.getText().equals("마우스 모드")) {
+					if (mm != mm2) {
+						time = 0;
+						gg++;
 
+					}
+				}else {
+					if (center.x > centerboxPoint[0] && center.x < centerboxPoint[1] && center.y > centerboxPoint[2] && center.y < centerboxPoint[3]) {
+						if (mm != mm2) {
+							time = 0;
+							gg++;
+
+						}
+					}
 				}
-				System.err.println(gg);
+//				System.err.println(gg);
 				mm2 = mm;
 				if (gg >= 5) {
 					if (mode == 0) {
@@ -695,7 +687,7 @@ public class video2 extends JPanel {
 					mm2 = 0;
 					gg = 0;
 					time = 0;
-					System.out.println("------------------------------");
+//					System.out.println("------------------------------");
 				}
 			}
 			if (jl.getText().equals("손 접음")) {
@@ -722,9 +714,13 @@ public class video2 extends JPanel {
 	}
 
 	public static void main(String[] args) throws InterruptedException, AWTException {
-
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		video2 v = new video2();
+		
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		File f=  new File("libs/opencv_java2413.dll");
+		System.load(f.getAbsolutePath());
+		System.out.println(f.getAbsolutePath());
+		
+		video v = new video();
 		VideoCapture webcam = new VideoCapture(0);
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 700);
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 1000);
@@ -788,7 +784,7 @@ public class video2 extends JPanel {
 					v.disegnaditacentropalmo(mimm, centro, dito, dita, subpoint);
 					center = centro;
 					
-//					v.connectSnake(centro);
+					v.connect(centro);
 //					v.mousetrack(dita, dito, centro, r, true, mimm, temp);
 
 				}
