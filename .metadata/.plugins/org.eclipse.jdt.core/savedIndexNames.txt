@@ -1,0 +1,4 @@
+INDEX VERSION 1.131+C:\Users\정보기술\Desktop\github\Hand-traking\.metadata\.plugins\org.eclipse.jdt.core
+1289320443.index
+449384428.index
+465283514.index

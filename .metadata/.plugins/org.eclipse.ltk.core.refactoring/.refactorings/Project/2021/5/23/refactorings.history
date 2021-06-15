@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;handtrack.video&apos; to &apos;video2&apos;&#x0D;&#x0A;- Original project: &apos;Project&apos;&#x0D;&#x0A;- Original element: &apos;handtrack.video&apos;&#x0D;&#x0A;- Renamed element: &apos;handtrack.video2&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;video&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;handtrack{video.java[video" matchStrategy="1" name="video2" qualified="false" references="true" similarDeclarations="false" stamp="1622387525881" textual="false" version="1.0"/>
+</session>
