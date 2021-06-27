@@ -716,10 +716,15 @@ public class video extends JPanel {
 	public static void main(String[] args) throws InterruptedException, AWTException {
 		
 //		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		File f=  new File("libs/opencv_java2413.dll");
-		System.load(f.getAbsolutePath());
-		System.out.println(f.getAbsolutePath());
 		
+		try {
+			File f=  new File("libs/opencv_java2413.dll");
+			System.load(f.getAbsolutePath());
+			System.out.println(f.getAbsolutePath());	
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		}
 		video v = new video();
 		VideoCapture webcam = new VideoCapture(0);
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 700);
