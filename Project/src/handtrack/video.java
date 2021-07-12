@@ -71,12 +71,12 @@ public class video extends JPanel {
 	public static Point[] rect = new Point[4];
 	public static int handx = 0, handy = 0;
 	public JPanel jp, ap;
-	public static String str = "¼Õ Ã£´ÂÁß...", str2 = "";
+	public static String str = "ì† ì°¾ëŠ”ì¤‘...", str2 = "";
 	public int boxPoint[] = { 50, 650, 50, 400 };
 	public static int centerboxPoint[] = { 250,450, 180, 300 };
 	private static int count = 0, mode = 0;
 
-// mode =0 -> ¸¶¿ì½º, 1 -> °ÔÀÓ
+// mode =0 -> ë§ˆìš°ìŠ¤, 1 -> ê²Œì„
 	/**
 	 * Create the panel.
 	 */
@@ -106,9 +106,9 @@ public class video extends JPanel {
 
 		jp.add(jl = new JLabel(str));
 		jp.add(model = new JLabel("..."));
-		jl.setFont(new Font("hy°ß°íµñ", Font.BOLD, 35));
+		jl.setFont(new Font("hyê²¬ê³ ë”•", Font.BOLD, 35));
 		jl.setForeground(Color.yellow);
-		model.setFont(new Font("hy°ß°íµñ", Font.BOLD, 35));
+		model.setFont(new Font("hyê²¬ê³ ë”•", Font.BOLD, 35));
 		model.setForeground(Color.yellow);
 
 		jl.setBorder(new EmptyBorder(10, 0, 0, 0));
@@ -124,7 +124,7 @@ public class video extends JPanel {
 		try {
 			BufferedImage aa = ImageIO.read(ss);
 
-			// ¹İÀü
+			// ë°˜ì „
 			BufferedImage reval = new BufferedImage(aa.getWidth(), aa.getHeight(), BufferedImage.TYPE_INT_RGB);
 			for (int i = 0; i < aa.getHeight(); i++) {
 				for (int j = 0; j < aa.getWidth(); j++) {
@@ -222,7 +222,7 @@ public class video extends JPanel {
 
 		Imgproc.findContours(immagine, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
 				new Point(0, 0));
-		// ÃÊ·Ï»ö ¿ø Å©±â °Å¸£±â, ÃÊ·Ï»ö °³¼ö °Å¸£±â
+		// ì´ˆë¡ìƒ‰ ì› í¬ê¸° ê±°ë¥´ê¸°, ì´ˆë¡ìƒ‰ ê°œìˆ˜ ê±°ë¥´ê¸°
 
 		for (int i = 0; i < contours.size(); i++) {
 			if (contours.get(i).size().height > filtropixel && contours.get(i).size().height < maxheight) {
@@ -503,14 +503,14 @@ public class video extends JPanel {
 		Core.line(immagine, new Point(boxPoint[1], boxPoint[2]), new Point(boxPoint[1], boxPoint[3]),
 				new Scalar(255, 0, 0), 2);
 
-		// »ç°¢Çü
+		// ì‚¬ê°í˜•
 		if (dita.size() == 1) {
 			Core.line(immagine, center, dito, new Scalar(0, 255, 255), 4);
 			Core.circle(immagine, dito, 3, new Scalar(255, 0, 255), 3);
 			// Core.putText(immagine, dito.toString(), dito, Core.FONT_HERSHEY_COMPLEX, 1,
 			// new Scalar(0,200,255));
 			hand = false;
-			str = "¼Õ Ã£´ÂÁß...";
+			str = "ì† ì°¾ëŠ”ì¤‘...";
 			model.setText("...");
 			jl.setText(str);
 			revalidate();
@@ -557,9 +557,9 @@ public class video extends JPanel {
 				// TODO: handle exception
 			}
 			if (cnt >= 4) {
-				str = "¼Õ ÇË";
+				str = "ì† í•Œ";
 			} else if (cnt <= 2) {
-				str = "¼Õ Á¢À½";
+				str = "ì† ì ‘ìŒ";
 			}
 
 			jl.setText(str);
@@ -570,7 +570,7 @@ public class video extends JPanel {
 
 		Core.circle(immagine, center, 3, new Scalar(0, 0, 255), 3);
 
-		// ¿©±â
+		// ì—¬ê¸°
 		Core.putText(immagine, center.toString(), new Point(0, 0), Core.FONT_HERSHEY_COMPLEX, 1,
 				new Scalar(0, 200, 255));
 
@@ -595,16 +595,16 @@ public class video extends JPanel {
 		try {
 			Robot r = new Robot();
 //			r.mouseMove((int)center.x, (int)center.y);
-			if (mode == 0) {// ¸¶¿ì½º
+			if (mode == 0) {// ë§ˆìš°ìŠ¤
 				r.mouseMove(1800 - (int) (center.x * 3 - 300), (int) center.y * 4 - 600);
 				
-				if (str.equals("¼Õ Á¢À½")) {
+				if (str.equals("ì† ì ‘ìŒ")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 					r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-				}else if (str.equals("¼Õ ÇË")) {
+				}else if (str.equals("ì† í•Œ")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 				}
-			} else {// °ÔÀÓ
+			} else {// ê²Œì„
 				
 				if (center.x > boxPoint[0] && center.x < centerboxPoint[0]) {
 					r.keyPress(39);
@@ -639,14 +639,14 @@ public class video extends JPanel {
 			// TODO Auto-generated method stub
 			if (center.x + 5 > p.x && center.x - 5 < p.x && center.y + 5 > p.y && center.y - 5 < p.y) {
 
-				if (jl.getText().equals("¼Õ ÇË")) {
+				if (jl.getText().equals("ì† í•Œ")) {
 					mm = 0;
-				} else if (jl.getText().equals("¼Õ Á¢À½")) {
+				} else if (jl.getText().equals("ì† ì ‘ìŒ")) {
 					mm = 1;
 
 				}
 				
-				if (model.getText().equals("¸¶¿ì½º ¸ğµå")) {
+				if (model.getText().equals("ë§ˆìš°ìŠ¤ ëª¨ë“œ")) {
 					if (mm != mm2) {
 						time = 0;
 						gg++;
@@ -676,9 +676,9 @@ public class video extends JPanel {
 				}
 				if (hand) {
 					if (mode == 0) {
-						model.setText("¸¶¿ì½º ¸ğµå");
+						model.setText("ë§ˆìš°ìŠ¤ ëª¨ë“œ");
 					} else {
-						model.setText("°ÔÀÓ ¸ğµå");
+						model.setText("ê²Œì„ ëª¨ë“œ");
 					}
 				}
 				time++;
@@ -690,14 +690,14 @@ public class video extends JPanel {
 //					System.out.println("------------------------------");
 				}
 			}
-			if (jl.getText().equals("¼Õ Á¢À½")) {
+			if (jl.getText().equals("ì† ì ‘ìŒ")) {
 				p.x = center.x;
 				p.y = center.y;
 			}
 		}
 	});
 
-	public void GuideLine(Mat immagine) {
+	public void GuideLine(Mat immagine) { //ê°€ì´ë“œ ì„  
 		Core.line(immagine, new Point(boxPoint[0], (boxPoint[2] + boxPoint[3]) / 2),
 				new Point(boxPoint[1], (boxPoint[2] + boxPoint[3]) / 2), new Scalar(255, 255, 0), 2);
 		Core.line(immagine, new Point((boxPoint[0] + boxPoint[1]) / 2, boxPoint[2]),
@@ -717,7 +717,7 @@ public class video extends JPanel {
 		
 //		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
-		try {
+		try { //í•¸ë“œíŠ¸ë ˆí‚¹ ë° ìº¡ì„ ì´ìš©í•˜ê¸°ìœ„í•œ opencv ì‹¤í–‰ íŒ¡ë¦¬ ë¶ˆëŸ¬ì˜¤ê¸°
 			File f=  new File("libs/opencv_java2413.dll");
 			System.load(f.getAbsolutePath());
 			System.out.println(f.getAbsolutePath());	
@@ -725,12 +725,14 @@ public class video extends JPanel {
 			// TODO: handle exception
 			System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		}
+		
 		video v = new video();
-		VideoCapture webcam = new VideoCapture(0);
+		VideoCapture webcam = new VideoCapture(0); //ìº  í‚¤ê¸°
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 700);
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 1000);
-		v.setframe(webcam);
+		v.setframe(webcam);// í¬ê¸° ì¡°ì • ë° ì‹¤í–‰
 
+		//ë³€ìˆ˜ ì„ ì–¸
 		Robot r = new Robot();
 		Mat mimm = new Mat();
 		Mat modifica = new Mat();
@@ -745,7 +747,7 @@ public class video extends JPanel {
 		tm.start();
 
 		while (!close) {
-			if (!webcam.isOpened() && !close) {
+			if (!webcam.isOpened() && !close) { // ì—ëŸ¬ ì²˜ë¦¬ 
 				System.out.println("Camera Error");
 			} else {
 				temp = System.currentTimeMillis();
@@ -754,23 +756,23 @@ public class video extends JPanel {
 				v.disegnrettangolo(mimm);
 				count = 0;
 
-				modifica = v.filtromorfologico(2, 7, v.filtrocolorehsv(0, 0, 0, 180, 255, 40, mimm));
+				modifica = v.filtromorfologico(2, 7, v.filtrocolorehsv(0, 0, 0, 180, 255, 40, mimm)); //ìƒ‰ ì¸ì‹
 
-				difetti = v.inviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5);
+				difetti = v.inviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5); //ì†ì¸ì‹ì„ ìœ„í•œ í™”ë©´ì˜ ìƒ‰, ìœ„ì¹˜ ì¸ì‹
 //				for (int i = 0; i < difetti.size(); i++) {
 //					System.out.println(difetti.get(i));
 //				}
 				if (count != 0) {
 					if (buffer.size() < 7) {
-						buffer.add(v.centropalmo(mimm, difetti));
+						buffer.add(v.centropalmo(mimm, difetti)); 
 					} else {
-						centro = v.filtromediamobile(buffer, v.centropalmo(mimm, difetti));
+						centro = v.filtromediamobile(buffer, v.centropalmo(mimm, difetti)); //ì¤‘ì‹¬ì  ì¡ê¸°
 //						 System.out.println((int)centro.x+" "+(int)centro.y+" "
 //						 		+ ""+(int)v.centropalmo(mimm,difetti).x+" "+(int)v.centropalmo(mimm,difetti).y);
 					}
 
 					dita = v.outviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5,
-							centro);
+							centro); //ì†ì˜ ì¢Œí‘œê°’ ë°›ì•„ì˜¤ê¸°
 
 //					if (dita.size() == 1 && bufferdita.size() < 5) {
 //						bufferdita.add(dita.get(0));
@@ -784,17 +786,17 @@ public class video extends JPanel {
 //					}
 
 //					v.disegnaditacentropalmo(mimm, centro, dito, difetti);
-					subpoint = v.handDraw(centro, dita);
+					subpoint = v.handDraw(centro, dita); // ì„¸ë¶€ì ì¸ ì† í‘œí˜„
 
-					v.disegnaditacentropalmo(mimm, centro, dito, dita, subpoint);
-					center = centro;
+					v.disegnaditacentropalmo(mimm, centro, dito, dita, subpoint); //ì†, ë°•ìŠ¤ í‘œì‹œ
+					center = centro; //ì„¼í„°ìœ„ì¹˜ í™•ì¸
 					
-					v.connect(centro);
+					v.connect(centro); // ë§ˆìš°ìŠ¤ ë° í‚¤ë³´ë“œ ì—°ê²°
 //					v.mousetrack(dita, dito, centro, r, true, mimm, temp);
 
 				}
-				v.GuideLine(mimm);
-				v.frametolabel(mimm);
+				v.GuideLine(mimm); // ê°€ì´ë“œ ì„  í‘œì‹œ
+				v.frametolabel(mimm); // í™”ë©´ì— ì°½ ë³´ì´ê²Œ 
 			}
 		}
 	}
