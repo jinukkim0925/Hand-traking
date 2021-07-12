@@ -1,5 +1,26 @@
 package handtrack;
 
+import java.awt.AWTException;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Robot;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -25,29 +46,6 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.utils.Converters;
 
-import java.awt.AWTException;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Robot;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 public class video extends JPanel {
 
 	/**
@@ -58,25 +56,20 @@ public class video extends JPanel {
 	private JLabel lab = new JLabel();
 	private static JLabel jl;
 	private static JLabel model;
-	private static String stringa = "";
 
-	private static Point last = new Point();
 	private static boolean close = false;
-	private static boolean act = false;
-	private static long current = 0;
-	private static long prev = 0;
 	private static boolean start = false, hand = false;
 	private static Point handbox1 = new Point();
 	private static Point handbox2 = new Point();
 	public static Point[] rect = new Point[4];
 	public static int handx = 0, handy = 0;
 	public JPanel jp, ap;
-	public static String str = "ì† ì°¾ëŠ”ì¤‘...", str2 = "";
+	public static String str = "¼Õ Ã£´ÂÁß...", str2 = "";
 	public int boxPoint[] = { 50, 650, 50, 400 };
 	public static int centerboxPoint[] = { 250,450, 180, 300 };
 	private static int count = 0, mode = 0;
 
-// mode =0 -> ë§ˆìš°ìŠ¤, 1 -> ê²Œì„
+// mode =0 -> ¸¶¿ì½º, 1 -> °ÔÀÓ
 	/**
 	 * Create the panel.
 	 */
@@ -106,9 +99,9 @@ public class video extends JPanel {
 
 		jp.add(jl = new JLabel(str));
 		jp.add(model = new JLabel("..."));
-		jl.setFont(new Font("hyê²¬ê³ ë”•", Font.BOLD, 35));
+		jl.setFont(new Font("hy°ß°íµñ", Font.BOLD, 35));
 		jl.setForeground(Color.yellow);
-		model.setFont(new Font("hyê²¬ê³ ë”•", Font.BOLD, 35));
+		model.setFont(new Font("hy°ß°íµñ", Font.BOLD, 35));
 		model.setForeground(Color.yellow);
 
 		jl.setBorder(new EmptyBorder(10, 0, 0, 0));
@@ -124,7 +117,7 @@ public class video extends JPanel {
 		try {
 			BufferedImage aa = ImageIO.read(ss);
 
-			// ë°˜ì „
+			// ¹İÀü
 			BufferedImage reval = new BufferedImage(aa.getWidth(), aa.getHeight(), BufferedImage.TYPE_INT_RGB);
 			for (int i = 0; i < aa.getHeight(); i++) {
 				for (int j = 0; j < aa.getWidth(); j++) {
@@ -140,27 +133,6 @@ public class video extends JPanel {
 		}
 	}
 
-	public double calcoladistanza(Point P1, Point P2) {
-		double distanza = Math.sqrt(((P1.x - P2.x) * (P1.x - P2.x)) + ((P1.y - P2.y) * (P1.y - P2.y)));
-
-		return distanza;
-	}
-
-	public double calcolaangolo(Point P1, Point P2, Point P3) {
-		double angolo = 0;
-		Point v1 = new Point();
-		Point v2 = new Point();
-		v1.x = P3.x - P1.x;
-		v1.y = P3.y - P1.y;
-		v2.x = P3.x - P2.x;
-		v2.y = P3.y - P2.y;
-		double dotproduct = (v1.x * v2.x) + (v1.y * v2.y);
-		double length1 = Math.sqrt((v1.x * v1.x) + (v1.y * v1.y));
-		double length2 = Math.sqrt((v2.x * v2.x) + (v2.y * v2.y));
-		double angle = Math.acos(dotproduct / (length1 * length2));
-		angolo = angle * 180 / Math.PI;
-		return angolo;
-	}
 
 	public Mat filtrocolorergb(int b, int g, int r, int b1, int g1, int r1, Mat immagine) {
 		Mat modifica = new Mat();
@@ -222,7 +194,7 @@ public class video extends JPanel {
 
 		Imgproc.findContours(immagine, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
 				new Point(0, 0));
-		// ì´ˆë¡ìƒ‰ ì› í¬ê¸° ê±°ë¥´ê¸°, ì´ˆë¡ìƒ‰ ê°œìˆ˜ ê±°ë¥´ê¸°
+		// ÃÊ·Ï»ö ¿ø Å©±â °Å¸£±â, ÃÊ·Ï»ö °³¼ö °Å¸£±â
 
 		for (int i = 0; i < contours.size(); i++) {
 			if (contours.get(i).size().height > filtropixel && contours.get(i).size().height < maxheight) {
@@ -304,9 +276,6 @@ public class video extends JPanel {
 						Point p = new Point();
 						Point p2 = new Point();
 
-						Point subp1 = new Point();
-						Point subp2 = new Point();
-
 						for (int j = i1 + 1; j < convexityDefects.size().height; j++) {
 							convexityDefects.get(j, 0, buff2);
 							if (buff2[3] / 256 > sogliaprofondita) {
@@ -370,7 +339,6 @@ public class video extends JPanel {
 			Imgproc.convexHull(contours.get(i), hull_);
 			Imgproc.convexityDefects(contours.get(i), hull_, convexityDefects);
 //			System.out.println(convexityDefects.size().height);
-			int cnt = 0;
 
 //			if (hull_.size().height >= 4 && convexityDefects.size().height < 30) {
 			if (hull_.size().height >= 4) {
@@ -503,14 +471,14 @@ public class video extends JPanel {
 		Core.line(immagine, new Point(boxPoint[1], boxPoint[2]), new Point(boxPoint[1], boxPoint[3]),
 				new Scalar(255, 0, 0), 2);
 
-		// ì‚¬ê°í˜•
+		// »ç°¢Çü
 		if (dita.size() == 1) {
 			Core.line(immagine, center, dito, new Scalar(0, 255, 255), 4);
 			Core.circle(immagine, dito, 3, new Scalar(255, 0, 255), 3);
 			// Core.putText(immagine, dito.toString(), dito, Core.FONT_HERSHEY_COMPLEX, 1,
 			// new Scalar(0,200,255));
 			hand = false;
-			str = "ì† ì°¾ëŠ”ì¤‘...";
+			str = "¼Õ Ã£´ÂÁß...";
 			model.setText("...");
 			jl.setText(str);
 			revalidate();
@@ -557,9 +525,9 @@ public class video extends JPanel {
 				// TODO: handle exception
 			}
 			if (cnt >= 4) {
-				str = "ì† í•Œ";
+				str = "¼Õ ÇË";
 			} else if (cnt <= 2) {
-				str = "ì† ì ‘ìŒ";
+				str = "¼Õ Á¢À½";
 			}
 
 			jl.setText(str);
@@ -570,7 +538,7 @@ public class video extends JPanel {
 
 		Core.circle(immagine, center, 3, new Scalar(0, 0, 255), 3);
 
-		// ì—¬ê¸°
+		// ¿©±â
 		Core.putText(immagine, center.toString(), new Point(0, 0), Core.FONT_HERSHEY_COMPLEX, 1,
 				new Scalar(0, 200, 255));
 
@@ -595,16 +563,16 @@ public class video extends JPanel {
 		try {
 			Robot r = new Robot();
 //			r.mouseMove((int)center.x, (int)center.y);
-			if (mode == 0) {// ë§ˆìš°ìŠ¤
+			if (mode == 0) {// ¸¶¿ì½º
 				r.mouseMove(1800 - (int) (center.x * 3 - 300), (int) center.y * 4 - 600);
 				
-				if (str.equals("ì† ì ‘ìŒ")) {
+				if (str.equals("¼Õ Á¢À½")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 					r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-				}else if (str.equals("ì† í•Œ")) {
+				}else if (str.equals("¼Õ ÇË")) {
 					r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 				}
-			} else {// ê²Œì„
+			} else {// °ÔÀÓ
 				
 				if (center.x > boxPoint[0] && center.x < centerboxPoint[0]) {
 					r.keyPress(39);
@@ -639,14 +607,14 @@ public class video extends JPanel {
 			// TODO Auto-generated method stub
 			if (center.x + 5 > p.x && center.x - 5 < p.x && center.y + 5 > p.y && center.y - 5 < p.y) {
 
-				if (jl.getText().equals("ì† í•Œ")) {
+				if (jl.getText().equals("¼Õ ÇË")) {
 					mm = 0;
-				} else if (jl.getText().equals("ì† ì ‘ìŒ")) {
+				} else if (jl.getText().equals("¼Õ Á¢À½")) {
 					mm = 1;
 
 				}
 				
-				if (model.getText().equals("ë§ˆìš°ìŠ¤ ëª¨ë“œ")) {
+				if (model.getText().equals("¸¶¿ì½º ¸ğµå")) {
 					if (mm != mm2) {
 						time = 0;
 						gg++;
@@ -676,9 +644,9 @@ public class video extends JPanel {
 				}
 				if (hand) {
 					if (mode == 0) {
-						model.setText("ë§ˆìš°ìŠ¤ ëª¨ë“œ");
+						model.setText("¸¶¿ì½º ¸ğµå");
 					} else {
-						model.setText("ê²Œì„ ëª¨ë“œ");
+						model.setText("°ÔÀÓ ¸ğµå");
 					}
 				}
 				time++;
@@ -690,14 +658,14 @@ public class video extends JPanel {
 //					System.out.println("------------------------------");
 				}
 			}
-			if (jl.getText().equals("ì† ì ‘ìŒ")) {
+			if (jl.getText().equals("¼Õ Á¢À½")) {
 				p.x = center.x;
 				p.y = center.y;
 			}
 		}
 	});
 
-	public void GuideLine(Mat immagine) { //ê°€ì´ë“œ ì„  
+	public void GuideLine(Mat immagine) { //°¡ÀÌµå ¼± 
 		Core.line(immagine, new Point(boxPoint[0], (boxPoint[2] + boxPoint[3]) / 2),
 				new Point(boxPoint[1], (boxPoint[2] + boxPoint[3]) / 2), new Scalar(255, 255, 0), 2);
 		Core.line(immagine, new Point((boxPoint[0] + boxPoint[1]) / 2, boxPoint[2]),
@@ -717,7 +685,7 @@ public class video extends JPanel {
 		
 //		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
-		try { //í•¸ë“œíŠ¸ë ˆí‚¹ ë° ìº¡ì„ ì´ìš©í•˜ê¸°ìœ„í•œ opencv ì‹¤í–‰ íŒ¡ë¦¬ ë¶ˆëŸ¬ì˜¤ê¸°
+		try { //ÇÚµåÆ®·¹Å· ¹× Ä¸À» ÀÌ¿ëÇÏ±âÀ§ÇÑ opencv ½ÇÇà ÆÎ¸® ºÒ·¯¿À±â
 			File f=  new File("libs/opencv_java2413.dll");
 			System.load(f.getAbsolutePath());
 			System.out.println(f.getAbsolutePath());	
@@ -727,19 +695,17 @@ public class video extends JPanel {
 		}
 		
 		video v = new video();
-		VideoCapture webcam = new VideoCapture(0); //ìº  í‚¤ê¸°
+		VideoCapture webcam = new VideoCapture(0); //Ä· Å°±â
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 700);
 		webcam.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 1000);
-		v.setframe(webcam);// í¬ê¸° ì¡°ì • ë° ì‹¤í–‰
+		v.setframe(webcam);// Å©±â Á¶Á¤ ¹× ½ÇÇà
 
-		//ë³€ìˆ˜ ì„ ì–¸
-		Robot r = new Robot();
+		//º¯¼ö ¼±¾ğ
 		Mat mimm = new Mat();
 		Mat modifica = new Mat();
 		Point centro = new Point();
 		Point dito = new Point();
 		List<Point> buffer = new LinkedList<Point>();
-		List<Point> bufferdita = new LinkedList<Point>();
 		List<Point> dita = new LinkedList<Point>();
 		List<Point> subpoint = new LinkedList<Point>();
 
@@ -747,7 +713,7 @@ public class video extends JPanel {
 		tm.start();
 
 		while (!close) {
-			if (!webcam.isOpened() && !close) { // ì—ëŸ¬ ì²˜ë¦¬ 
+			if (!webcam.isOpened() && !close) { // ¿¡·¯ Ã³¸® 
 				System.out.println("Camera Error");
 			} else {
 				temp = System.currentTimeMillis();
@@ -756,9 +722,9 @@ public class video extends JPanel {
 				v.disegnrettangolo(mimm);
 				count = 0;
 
-				modifica = v.filtromorfologico(2, 7, v.filtrocolorehsv(0, 0, 0, 180, 255, 40, mimm)); //ìƒ‰ ì¸ì‹
+				modifica = v.filtromorfologico(2, 7, v.filtrocolorehsv(0, 0, 0, 180, 255, 40, mimm)); //»ö ÀÎ½Ä
 
-				difetti = v.inviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5); //ì†ì¸ì‹ì„ ìœ„í•œ í™”ë©´ì˜ ìƒ‰, ìœ„ì¹˜ ì¸ì‹
+				difetti = v.inviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5); //¼ÕÀÎ½ÄÀ» À§ÇÑ È­¸éÀÇ »ö, À§Ä¡ ÀÎ½Ä
 //				for (int i = 0; i < difetti.size(); i++) {
 //					System.out.println(difetti.get(i));
 //				}
@@ -766,13 +732,13 @@ public class video extends JPanel {
 					if (buffer.size() < 7) {
 						buffer.add(v.centropalmo(mimm, difetti)); 
 					} else {
-						centro = v.filtromediamobile(buffer, v.centropalmo(mimm, difetti)); //ì¤‘ì‹¬ì  ì¡ê¸°
+						centro = v.filtromediamobile(buffer, v.centropalmo(mimm, difetti)); //Áß½ÉÁ¡ Àâ±â
 //						 System.out.println((int)centro.x+" "+(int)centro.y+" "
 //						 		+ ""+(int)v.centropalmo(mimm,difetti).x+" "+(int)v.centropalmo(mimm,difetti).y);
 					}
 
 					dita = v.outviluppodifetti(mimm, v.cercacontorno(mimm, modifica, false, false, 300, 5000), false, 5,
-							centro); //ì†ì˜ ì¢Œí‘œê°’ ë°›ì•„ì˜¤ê¸°
+							centro); //¼ÕÀÇ ÁÂÇ¥°ª ¹Ş¾Æ¿À±â
 
 //					if (dita.size() == 1 && bufferdita.size() < 5) {
 //						bufferdita.add(dita.get(0));
@@ -786,17 +752,17 @@ public class video extends JPanel {
 //					}
 
 //					v.disegnaditacentropalmo(mimm, centro, dito, difetti);
-					subpoint = v.handDraw(centro, dita); // ì„¸ë¶€ì ì¸ ì† í‘œí˜„
+					subpoint = v.handDraw(centro, dita); // ¼¼ºÎÀûÀÎ ¼Õ Ç¥Çö
 
-					v.disegnaditacentropalmo(mimm, centro, dito, dita, subpoint); //ì†, ë°•ìŠ¤ í‘œì‹œ
-					center = centro; //ì„¼í„°ìœ„ì¹˜ í™•ì¸
+					v.disegnaditacentropalmo(mimm, centro, dito, dita, subpoint); //¼Õ, ¹Ú½º Ç¥½Ã
+					center = centro; //¼¾ÅÍÀ§Ä¡ È®ÀÎ
 					
-					v.connect(centro); // ë§ˆìš°ìŠ¤ ë° í‚¤ë³´ë“œ ì—°ê²°
+					v.connect(centro); // ¸¶¿ì½º ¹× Å°º¸µå ¿¬°á
 //					v.mousetrack(dita, dito, centro, r, true, mimm, temp);
 
 				}
-				v.GuideLine(mimm); // ê°€ì´ë“œ ì„  í‘œì‹œ
-				v.frametolabel(mimm); // í™”ë©´ì— ì°½ ë³´ì´ê²Œ 
+				v.GuideLine(mimm); // °¡ÀÌµå ¼± Ç¥½Ã
+				v.frametolabel(mimm); // È­¸é¿¡ Ã¢ º¸ÀÌ°Ô 
 			}
 		}
 	}
